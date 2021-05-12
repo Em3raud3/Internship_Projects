@@ -1,16 +1,4 @@
-Join Observable to explore and create live, interactive data visualizations.
-Popular / AboutMichael Stanaland’s Block 6100713
-Updated June 14, 2020
-Stacked bar chart with tooltips
 
-Open
-A simple stacked coloumn graph built using d3's stack layout.
-
-The SVG tooltip is based on this gist by Mike Bostock. In short, the tooltip's group, comprised of a rect and a text element, are created when the chart is first drawn and set to be hidden. Action is applied to the stacks' rects: on mouseover the group become visible; on mousemove the mouse's XY position is captured and used to transform/translate the group.
-
-If you ajust the tooltip's XY offset, keep in mind that there can be no overlap between the group and the mouse's position or the group's visibility will remain hidden.
-
-index.html#
 <!DOCTYPE html>
 <html lang="en">
 <head>

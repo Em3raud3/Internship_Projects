@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 import csv
 from flask import Flask, render_template
 app = Flask(__name__)
@@ -9,6 +10,8 @@ def loadAccessFile():
     
     logList = []
     uniqueID = set()
+    uniqueDate = set()
+    uniqueName = set()
     
     fr = open("AccessLog.txt", "rt")
     
@@ -16,6 +19,8 @@ def loadAccessFile():
         tempList = x.split()
         logList.append([tempList[2], ((tempList[3])[1:]), tempList[8], tempList[2] + ((tempList[3])[1:])])
         uniqueID.add(tempList[2] + ((tempList[3])[1:]))
+        uniqueDate.add((tempList[3])[1:])
+        uniqueName.add(tempList[2])
     
     fr.close()   
     
