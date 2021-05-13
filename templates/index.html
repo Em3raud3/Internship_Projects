@@ -1,71 +1,176 @@
-<!doctype html>
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<style>
-.bar {
-	fill: steelblue;
-}
+  <meta charset="UTF-8" />
+  <title>d3.js learning</title>
+  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <style type="text/css">
+  svg {
+    font: 10px sans-serif;
+    shape-rendering: crispEdges;
+  }
 
-.Rrrrr {
-	font: italic 40px serif;
-	fill: white;
-}
-</style>
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+  }
+ 
+  path.domain {
+    stroke: none;
+  }
+ 
+  .y .tick line {
+    stroke: #ddd;
+  }
+  </style>
 
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<body style="background-color: silver; text-align: center;">
+</head>
+<body>
+<script type="text/javascript">
 
-	<svg width="600" height="500">
+// Setup svg using Bostock's margin convention
+
+var margin = {top: 20, right: 160, bottom: 35, left: 30};
+
+var width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var svg = d3.select("body")
+  .append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-<text x="50%" y="15%" class="Rrrrr" dominant-baseline="middle"
-			text-anchor="middle">Login Trend</text>
-		
-</svg>
-	<script>
-		var svg = d3.select("svg"), margin = 200, width = svg.attr("width")
-				- margin, height = svg.attr("height") - margin
+/* Data in strings like it would be if imported from a csv */
 
-		var xScale = d3.scaleBand().range([ 0, width ]).padding(0.4), 
-		    yScale = d3.scaleLinear().range([ height, 0 ]);
-
-		var g = svg.append("g").attr("transform",
-				"translate(" + 100 + "," + 100 + ")");
-
-		d3.csv("/static/js/Database.csv", function(error, data) {
+d3.csv("/static/js/Database.csv", function(error, data) {
 			if (error) {
 				throw error;
 			}
 
-			xScale.domain(data.map(function(d) {
-				return d.year;
-			}));
-			yScale.domain([ 0, d3.max(data, function(d) {
-				return d.value;
-			}) ]);
+var parse = d3.time.format("%D/%Y/%M").parse;
 
-			g.append("g").attr("transform", "translate(0," + height + ")")
-					.call(d3.axisBottom(xScale)).append("text").attr("y",
-							height - 250).attr("x", width - 100).attr(
-							"text-anchor", "end").attr("stroke", "black").text(
-							"Date");
 
-			g.append("g").call(d3.axisLeft(yScale).tickFormat(function(d) {
-				return "$" + d;
-			}).ticks(10)).append("text").attr("transform", "rotate(-90)").attr(
-					"y", 6).attr("dy", "-5.1em").attr("text-anchor", "end")
-					.attr("stroke", "black").text("Daily Logins");
+// Transpose the data into layers
+var dataset = d3.layout.stack()(["redDelicious", "mcintosh", "oranges", "pears"].map(function(fruit) {
+  return data.map(function(d) {
+    return {x: parse(d.year), y: +d[fruit]};
+  });
+}));
 
-			g.selectAll(".bar").data(data).enter().append("rect").attr("class",
-					"bar").attr("x", function(d) {
-				return xScale(d.Date);
-			}).attr("y", function(d) {
-				return yScale(d.Daily_Logins);
-			}).attr("width", xScale.bandwidth()).attr("height", function(d) {
-				return height - yScale(d.value);
-			});
-		});
-	</script>
 
+// Set x, y and colors
+var x = d3.scale.ordinal()
+  .domain(dataset[0].map(function(d) { return d.x; }))
+  .rangeRoundBands([10, width-10], 0.02);
+
+var y = d3.scale.linear()
+  .domain([0, d3.max(dataset, function(d) {  return d3.max(d, function(d) { return d.y0 + d.y; });  })])
+  .range([height, 0]);
+
+var colors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
+
+
+// Define and draw axes
+var yAxis = d3.svg.axis()
+  .scale(y)
+  .orient("left")
+  .ticks(5)
+  .tickSize(-width, 0, 0)
+  .tickFormat( function(d) { return d } );
+
+var xAxis = d3.svg.axis()
+  .scale(x)
+  .orient("bottom")
+  .tickFormat(d3.time.format("%Y"));
+
+svg.append("g")
+  .attr("class", "y axis")
+  .call(yAxis);
+
+svg.append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(xAxis);
+
+
+// Create groups for each series, rects for each segment 
+var groups = svg.selectAll("g.cost")
+  .data(dataset)
+  .enter().append("g")
+  .attr("class", "cost")
+  .style("fill", function(d, i) { return colors[i]; });
+
+var rect = groups.selectAll("rect")
+  .data(function(d) { return d; })
+  .enter()
+  .append("rect")
+  .attr("x", function(d) { return x(d.x); })
+  .attr("y", function(d) { return y(d.y0 + d.y); })
+  .attr("height", function(d) { return y(d.y0) - y(d.y0 + d.y); })
+  .attr("width", x.rangeBand())
+  .on("mouseover", function() { tooltip.style("display", null); })
+  .on("mouseout", function() { tooltip.style("display", "none"); })
+  .on("mousemove", function(d) {
+    var xPosition = d3.mouse(this)[0] - 15;
+    var yPosition = d3.mouse(this)[1] - 25;
+    tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+    tooltip.select("text").text(d.y);
+  });
+
+
+// Draw legend
+var legend = svg.selectAll(".legend")
+  .data(colors)
+  .enter().append("g")
+  .attr("class", "legend")
+  .attr("transform", function(d, i) { return "translate(30," + i * 19 + ")"; });
+ 
+legend.append("rect")
+  .attr("x", width - 18)
+  .attr("width", 18)
+  .attr("height", 18)
+  .style("fill", function(d, i) {return colors.slice().reverse()[i];});
+ 
+legend.append("text")
+  .attr("x", width + 5)
+  .attr("y", 9)
+  .attr("dy", ".35em")
+  .style("text-anchor", "start")
+  .text(function(d, i) { 
+    switch (i) {
+      case 0: return "Anjou pears";
+      case 1: return "Naval oranges";
+      case 2: return "McIntosh apples";
+      case 3: return "Red Delicious apples";
+    }
+  });
+
+
+// Prep the tooltip bits, initial display is hidden
+var tooltip = svg.append("g")
+  .attr("class", "tooltip")
+  .style("display", "none");
+    
+tooltip.append("rect")
+  .attr("width", 30)
+  .attr("height", 20)
+  .attr("fill", "white")
+  .style("opacity", 0.5);
+
+tooltip.append("text")
+  .attr("x", 15)
+  .attr("dy", "1.2em")
+  .style("text-anchor", "middle")
+  .attr("font-size", "12px")
+  .attr("font-weight", "bold");
+
+</script>
 </body>
 </html>
+LICENSE#
+This block appears to have no license. Please contact the author to request a license.
