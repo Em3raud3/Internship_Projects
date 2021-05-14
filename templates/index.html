@@ -36,8 +36,8 @@ path.domain {
 			left : 30
 		};
 
-		var width = 1500 - margin.left - margin.right, height = 700 - margin.top
-				- margin.bottom;
+		var width = 1500 - margin.left - margin.right, height = 700
+				- margin.top - margin.bottom;
 
 		var svg = d3.select("body").append("svg").attr("width",
 				width + margin.left + margin.right).attr("height",
@@ -47,31 +47,29 @@ path.domain {
 
 		/* Data in strings like it would be if imported from a csv */
 
-		d3.csv("/static/js/fruits.csv", function(data) {
-			var parse = d3.time.format("%Y").parse;
-			
+		d3.csv("/static/js/Database.csv", function(data) {
+			var parse = d3.time.format("%d/%b/%Y").parse;
+
 			var header = []
 			data.forEach(function(row) {
 				header.push(Object.keys(row))
 			});
-			
-			var  arrayLength = header[0].length;
+
+			var arrayLength = header[0].length;
 			console.log(arrayLength);
-			
-			header = header[0].slice(1,header[0].length);
+
+			header = header[0].slice(1, header[0].length);
 			console.log(header);
-			
+
 			// Transpose the data into layers
-			var dataset = d3.layout.stack()(
-					header
-							.map(function(fruit) {
-								return data.map(function(d) {
-									return {
-										x : parse(d.year),
-										y : +d[fruit]
-									};
-								});
-							}));
+			var dataset = d3.layout.stack()(header.map(function(fruit) {
+				return data.map(function(d) {
+					return {
+						x : parse(d.Date),
+						y : +d[fruit]
+					};
+				});
+			}));
 
 			// Set x, y and colors
 			var x = d3.scale.ordinal().domain(dataset[0].map(function(d) {
@@ -85,14 +83,15 @@ path.domain {
 			}) ]).range([ height, 0 ]);
 
 			var colors = [];
-			
+
 			while (arrayLength > 1) {
-				  // code block to be executed
-				  var randomColor = Math.floor(Math.random()*16777215).toString(16);
-				  colors.push("#" + randomColor);			
-				  arrayLength--;
-				}
-			
+				// code block to be executed
+				var randomColor = Math.floor(Math.random() * 16777215)
+						.toString(16);
+				colors.push("#" + randomColor);
+				arrayLength--;
+			}
+
 			console.log(colors);
 
 			// Define and draw axes
@@ -141,7 +140,7 @@ path.domain {
 			var legend = svg.selectAll(".legend").data(colors).enter().append(
 					"g").attr("class", "legend").attr("transform",
 					function(d, i) {
-						return "translate(30," + i * 10 + ")";
+						return "translate(30," + i * 8.1 + ")";
 					});
 
 			legend.append("rect").attr("x", width - 5).attr("width", 5).attr(
@@ -149,7 +148,7 @@ path.domain {
 				return colors.slice().reverse()[i];
 			});
 
-			legend.append("text").attr("x", width + 5).attr("y", 2).attr("dy",
+			legend.append("text").attr("x", width + 5).attr("y", 1).attr("dy",
 					".35em").style("text-anchor", "start").text(function(d, i) {
 				return header[i]
 			});
