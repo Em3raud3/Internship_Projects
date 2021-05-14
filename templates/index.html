@@ -2,33 +2,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>d3.js learning</title>
-  <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-  <style type="text/css">
-  svg {
-    font: 10px sans-serif;
-    shape-rendering: crispEdges;
-  }
+<meta charset="UTF-8" />
+<title>d3.js learning</title>
+<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<style type="text/css">
+svg {
+	font: 10px sans-serif;
+	shape-rendering: crispEdges;
+}
 
-  .axis path,
-  .axis line {
-    fill: none;
-    stroke: #000;
-  }
- 
-  path.domain {
-    stroke: none;
-  }
- 
-  .y .tick line {
-    stroke: #ddd;
-  }
-  </style>
+.axis path, .axis line {
+	fill: none;
+	stroke: #000;
+}
+
+path.domain {
+	stroke: none;
+}
+
+.y .tick line {
+	stroke: #ddd;
+}
+</style>
 
 </head>
 <body>
-<script type="text/javascript">
+	<script type="text/javascript">
 
 // Setup svg using Bostock's margin convention
 
@@ -45,20 +44,24 @@ var svg = d3.select("body")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
+
 /* Data in strings like it would be if imported from a csv */
 
-d3.csv("/static/js/Database.csv", function(error, data) {
-			if (error) {
-				throw error;
-			}
+var data = []
+	
+	
+	d3.csv("/static/js/Database.csv", function(csvdata) {
+		data=csvdata
+			console.log(csvdata)
+});
 
-var parse = d3.time.format("%D/%Y/%M").parse;
+var parse = d3.time.format("%D/%M/%Y").parse;
 
 
 // Transpose the data into layers
-var dataset = d3.layout.stack()(["redDelicious", "mcintosh", "oranges", "pears"].map(function(fruit) {
+var dataset = d3.layout.stack()( {{uniqueName}}.map(function(userLogin) {
   return data.map(function(d) {
-    return {x: parse(d.year), y: +d[fruit]};
+    return {x: parse(d.Date), y: +d[userLogin]};
   });
 }));
 
@@ -86,7 +89,7 @@ var yAxis = d3.svg.axis()
 var xAxis = d3.svg.axis()
   .scale(x)
   .orient("bottom")
-  .tickFormat(d3.time.format("%Y"));
+  .tickFormat(d3.time.format("%D/%M/%Y"));
 
 svg.append("g")
   .attr("class", "y axis")
@@ -123,33 +126,6 @@ var rect = groups.selectAll("rect")
   });
 
 
-// Draw legend
-var legend = svg.selectAll(".legend")
-  .data(colors)
-  .enter().append("g")
-  .attr("class", "legend")
-  .attr("transform", function(d, i) { return "translate(30," + i * 19 + ")"; });
- 
-legend.append("rect")
-  .attr("x", width - 18)
-  .attr("width", 18)
-  .attr("height", 18)
-  .style("fill", function(d, i) {return colors.slice().reverse()[i];});
- 
-legend.append("text")
-  .attr("x", width + 5)
-  .attr("y", 9)
-  .attr("dy", ".35em")
-  .style("text-anchor", "start")
-  .text(function(d, i) { 
-    switch (i) {
-      case 0: return "Anjou pears";
-      case 1: return "Naval oranges";
-      case 2: return "McIntosh apples";
-      case 3: return "Red Delicious apples";
-    }
-  });
-
 
 // Prep the tooltip bits, initial display is hidden
 var tooltip = svg.append("g")
@@ -172,5 +148,4 @@ tooltip.append("text")
 </script>
 </body>
 </html>
-LICENSE#
-This block appears to have no license. Please contact the author to request a license.
+
