@@ -55,6 +55,9 @@ path.domain {
 				header.push(Object.keys(row))
 			});
 			
+			var  arrayLength = header[0].length;
+			console.log(arrayLength);
+			
 			header = header[0].slice(1,header[0].length);
 			console.log(header);
 			
@@ -81,7 +84,17 @@ path.domain {
 				});
 			}) ]).range([ height, 0 ]);
 
-			var colors = [ "b33040", "#d25c4d", "#f2b447", "#d9d574" ];
+			var colors = [];
+			
+			while (arrayLength > 1) {
+				  // code block to be executed
+				  var randomColor = Math.floor(Math.random()*16777215).toString(16);
+				  colors.push("#" + randomColor);
+				  console.log(randomColor);
+				  arrayLength--;
+				}
+			
+			console.log(colors);
 
 			// Define and draw axes
 			var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5)
