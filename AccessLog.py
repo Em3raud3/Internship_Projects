@@ -67,6 +67,7 @@ def loadAccessFile():
         
         for x in finalList:
             dataWriter.writerow(x)
+            
     
     
     return render_template("index.html")

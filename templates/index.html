@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>d3.js learning</title>
+<title>Login Logs</title>
 <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <style type="text/css">
 svg {
@@ -32,18 +32,18 @@ path.domain {
 		var margin = {
 			top : 20,
 			right : 160,
-			bottom : 35,
+			bottom : 80,
 			left : 30
 		};
 
-		var width = 1500 - margin.left - margin.right, height = 700
-				- margin.top - margin.bottom;
+		var width = 1500 - margin.left - margin.right, 
+			height = 700- margin.top - margin.bottom;
 
-		var svg = d3.select("body").append("svg").attr("width",
-				width + margin.left + margin.right).attr("height",
-				height + margin.top + margin.bottom).append("g").attr(
-				"transform",
-				"translate(" + margin.left + "," + margin.top + ")");
+		var svg = d3.select("body")
+			.append("svg")
+			.attr("width",width + margin.left + margin.right)
+			.attr("height",height + margin.top + margin.bottom)
+			.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 		/* Data in strings like it would be if imported from a csv */
 
@@ -101,12 +101,19 @@ path.domain {
 					});
 
 			var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(
-					d3.time.format("%Y"));
+					d3.time.format("%d/%b/%Y"));
 
 			svg.append("g").attr("class", "y axis").call(yAxis);
 
-			svg.append("g").attr("class", "x axis").attr("transform",
-					"translate(0," + height + ")").call(xAxis);
+			svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform","translate(0," + height + ")")
+			.call(xAxis)
+			.selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)" );
 
 			// Create groups for each series, rects for each segment 
 			var groups = svg.selectAll("g.cost").data(dataset).enter().append(
@@ -114,32 +121,43 @@ path.domain {
 				return colors[i];
 			});
 
-			var rect = groups.selectAll("rect").data(function(d) {
+			var rect = groups.selectAll("rect").
+				data(function(d) {
 				return d;
-			}).enter().append("rect").attr("x", function(d) {
-				return x(d.x);
-			}).attr("y", function(d) {
-				return y(d.y0 + d.y);
-			}).attr("height", function(d) {
-				return y(d.y0) - y(d.y0 + d.y);
-			}).attr("width", x.rangeBand()).on("mouseover", function() {
-				tooltip.style("display", null);
-			}).on("mouseout", function() {
-				tooltip.style("display", "none");
-			}).on(
-					"mousemove",
-					function(d) {
+					})
+				.enter()
+				.append("rect")
+				.attr("x", function(d) {
+					return x(d.x);
+					})
+				.attr("y", function(d) {
+					return y(d.y0 + d.y);
+					})
+				.attr("height", function(d) {
+					return y(d.y0) - y(d.y0 + d.y);
+					})
+				.attr("width", x.rangeBand()).on("mouseover", function() {
+					tooltip.style("display", null);
+					})
+				.on("mouseout", function() {
+					tooltip.style("display", "none");
+					})
+					.on("mousemove",function(d) {
+						
 						var xPosition = d3.mouse(this)[0] - 15;
 						var yPosition = d3.mouse(this)[1] - 25;
-						tooltip.attr("transform", "translate(" + xPosition
-								+ "," + yPosition + ")");
-						tooltip.select("text").text(d.y);
+						
+						tooltip.attr("transform", "translate(" + xPosition+ "," + yPosition + ")");
+						tooltip.select("text").text("name" + " " + d.y);
 					});
 
 			// Draw legend
-			var legend = svg.selectAll(".legend").data(colors).enter().append(
-					"g").attr("class", "legend").attr("transform",
-					function(d, i) {
+			var legend = svg.selectAll(".legend")
+				.data(colors)
+				.enter()
+					.append("g")
+					.attr("class", "legend")
+					.attr("transform",function(d, i) {
 						return "translate(30," + i * 8.1 + ")";
 					});
 
@@ -148,21 +166,32 @@ path.domain {
 				return colors.slice().reverse()[i];
 			});
 
-			legend.append("text").attr("x", width + 5).attr("y", 1).attr("dy",
-					".35em").style("text-anchor", "start").text(function(d, i) {
+			legend.append("text")
+				.attr("x", width + 5)
+				.attr("y", 1)
+				.attr("dy",".35em")
+				.style("text-anchor", "start")
+				.text(function(d, i) {
 				return header[i]
 			});
 
 			// Prep the tooltip bits, initial display is hidden
-			var tooltip = svg.append("g").attr("class", "tooltip").style(
-					"display", "none");
+			var tooltip = svg.append("g")
+				.attr("class", "tooltip")
+				.style("display", "none");
 
-			tooltip.append("rect").attr("width", 30).attr("height", 20).attr(
-					"fill", "white").style("opacity", 0.5);
+			tooltip.append("rect")
+				.attr("width", 30)
+				.attr("height", 20)
+				.attr("fill", "white")
+				.style("opacity", 0.5);
 
-			tooltip.append("text").attr("x", 15).attr("dy", "1.2em").style(
-					"text-anchor", "middle").attr("font-size", "12px").attr(
-					"font-weight", "bold");
+			tooltip.append("text")
+				.attr("x", 15)
+				.attr("dy", "1.2em")
+				.style("text-anchor", "middle")
+				.attr("font-size", "12px")
+				.attr("font-weight", "bold");
 
 		})
 	</script>
