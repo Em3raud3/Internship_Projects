@@ -34,16 +34,16 @@ path.domain {
 			right : 160,
 			bottom : 80,
 			left : 30
-		};
+			};
 
-		var width = 1500 - margin.left - margin.right, 
-			height = 700- margin.top - margin.bottom;
+		var width = 1500 - margin.left - margin.right;
+		var	height = 700- margin.top - margin.bottom;
 
 		var svg = d3.select("body")
-			.append("svg")
-			.attr("width",width + margin.left + margin.right)
-			.attr("height",height + margin.top + margin.bottom)
-			.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
+					.append("svg")
+					.attr("width",width + margin.left + margin.right)
+					.attr("height",height + margin.top + margin.bottom)
+					.append("g").attr("transform","translate(" + margin.left + "," + margin.top + ")");
 
 		/* Data in strings like it would be if imported from a csv */
 
@@ -62,11 +62,12 @@ path.domain {
 			console.log(header);
 
 			// Transpose the data into layers
-			var dataset = d3.layout.stack()(header.map(function(fruit) {
+			var dataset = d3.layout.stack()(header.map(function(user) {
 				return data.map(function(d) {
 					return {
-						x : parse(d.Date),
-						y : +d[fruit]
+						x : parse(d.Date), 
+						y : +d[user], 
+						username: user
 					};
 				});
 			}));
@@ -116,40 +117,40 @@ path.domain {
             .attr("transform", "rotate(-65)" );
 
 			// Create groups for each series, rects for each segment 
-			var groups = svg.selectAll("g.cost").data(dataset).enter().append(
-					"g").attr("class", "cost").style("fill", function(d, i) {
-				return colors[i];
-			});
-
-			var rect = groups.selectAll("rect").
-				data(function(d) {
-				return d;
-					})
+			var groups = svg.selectAll("g.cost")
+				.data(dataset)
 				.enter()
-				.append("rect")
-				.attr("x", function(d) {
-					return x(d.x);
-					})
-				.attr("y", function(d) {
-					return y(d.y0 + d.y);
-					})
-				.attr("height", function(d) {
-					return y(d.y0) - y(d.y0 + d.y);
-					})
-				.attr("width", x.rangeBand()).on("mouseover", function() {
-					tooltip.style("display", null);
-					})
-				.on("mouseout", function() {
-					tooltip.style("display", "none");
-					})
-					.on("mousemove",function(d) {
-						
-						var xPosition = d3.mouse(this)[0] - 15;
-						var yPosition = d3.mouse(this)[1] - 25;
-						
-						tooltip.attr("transform", "translate(" + xPosition+ "," + yPosition + ")");
-						tooltip.select("text").text("name" + " " + d.y);
-					});
+					.append("g")
+					.attr("class", "cost")
+					.style("fill", function(d, i) {	
+						return colors[i];
+						}
+					);
+
+			var rect = groups.selectAll("rect")
+							.data(function(d) {
+								return d;
+								}
+							)
+							.enter()
+								.append("rect")
+								.attr("x", function(d) {
+									return x(d.x);})
+								.attr("y", function(d) {return y(d.y0 + d.y);})
+								.attr("height", function(d) {return y(d.y0) - y(d.y0 + d.y);})
+								.attr("width", x.rangeBand())
+								.on("mouseover", function() {tooltip.style("display", null);})
+								.on("mouseout", function() {tooltip.style("display", "none");})
+								.on("mousemove",function(d) {
+									
+									var xPosition = d3.mouse(this)[0] - 15;
+									var yPosition = d3.mouse(this)[1] - 25;
+									
+									tooltip.attr("transform", "translate(" + xPosition+ "," + yPosition + ")");
+									tooltip.select("text").
+									text(d.username + ": " + d.y);
+									}
+								);
 
 			// Draw legend
 			var legend = svg.selectAll(".legend")
@@ -161,8 +162,11 @@ path.domain {
 						return "translate(30," + i * 8.1 + ")";
 					});
 
-			legend.append("rect").attr("x", width - 5).attr("width", 5).attr(
-					"height", 5).style("fill", function(d, i) {
+			legend.append("rect")
+			.attr("x", width - 5)
+			.attr("width", 5)
+			.attr("height", 5)
+			.style("fill", function(d, i) {
 				return colors.slice().reverse()[i];
 			});
 
@@ -192,7 +196,6 @@ path.domain {
 				.style("text-anchor", "middle")
 				.attr("font-size", "12px")
 				.attr("font-weight", "bold");
-
 		})
 	</script>
 </body>
