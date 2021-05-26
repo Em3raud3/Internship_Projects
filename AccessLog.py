@@ -13,7 +13,7 @@ def loadAccessFile():
     uniqueDate = set()
     uniqueName = set()
 
-    fr = open("AccessLog.txt", "rt")
+    fr = open("app.qcr.io.access.log", "r")
 
     for x in fr:
         tempList = x.split()
