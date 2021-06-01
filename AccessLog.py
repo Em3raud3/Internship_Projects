@@ -14,7 +14,8 @@ def loadAccessFile():
     uniqueName = set()
 
     fr = open("app.qcr.io.access.log", "r")
-
+    
+    #parsed though each line and selected the parts I wanted for each list to have
     for x in fr:
         tempList = x.split()
         logList.append([tempList[2], ((tempList[3])[1:]), tempList[8], tempList[2] + ((tempList[3])[1:])])
@@ -25,8 +26,12 @@ def loadAccessFile():
     fr.close()
 
     uniqueDate = list(uniqueDate)
-    uniqueDate.sort(key = lambda date: datetime.strptime(date, '%d/%b/%Y'))
     uniqueName = sorted(uniqueName)
+    
+    #sorted by date in proper form
+    uniqueDate.sort(key = lambda date: datetime.strptime(date, '%d/%b/%Y'))
+    
+    
 
     for x in uniqueID:
         length = len(x)
@@ -76,20 +81,3 @@ if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0')
 
 
-#print(finalList)
-#print(localList)
-#print(len(uniqueName))
-# print(len(uniqueDate))
-
-#for x in logList:
-    #strA = str(x[0])
-    #strB = str(x[1])
-    #strC = str(x[2])
-    #tempStr = strA + "," + strB + "," + strC
-    #fw.write(tempStr)
-    #fw.write("\n")
-
-#print(uniqueID)
-#print(logList[0][2], (logList[0][3])[1:], logList[0][8])
-#print(logList)
-#print(f.read())
