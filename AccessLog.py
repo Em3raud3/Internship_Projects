@@ -10,8 +10,6 @@ import sys
 
 app = Flask(__name__)
 
-#hopefully it updates
-
 @app.after_request
 def add_header(response):
     if 'Cache-Control' not in response.headers:
