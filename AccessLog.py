@@ -10,6 +10,12 @@ import sys
 
 app = Flask(__name__)
 
+@app.after_request
+def add_header(response):
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
+
 @app.route('/Update')
 def createAccessFile():
     #calculate time period to look back based on user preference 
