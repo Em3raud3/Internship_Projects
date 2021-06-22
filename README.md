@@ -11,3 +11,4 @@ In this project I accomplished the following
 - Used flask to create a small webapp that used D3 to visualize the data in the csv file that was generated in a stacking bar-graph.
 - Dockerized the file
 - Uploaded into GitLab and set up CI/CD
+- Deployed it on VM's with Ansible
