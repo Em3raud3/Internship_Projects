@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+        app-service:
+                image: "registry.dsra.io/jweng3/flask_web"
+                volumes:
+                        - ./data:/flask_web/static/js
+                        - ./nginx:/flask_web/nginx
+                ports:
+                        - 80:5000
