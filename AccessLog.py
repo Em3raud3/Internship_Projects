@@ -9,6 +9,7 @@ import time
 import sys
 
 app = Flask(__name__)
+app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 @app.after_request
 def add_header(response):
@@ -16,7 +17,7 @@ def add_header(response):
         response.headers['Cache-Control'] = 'no-store'
     return response
 
-@app.route('/Update')
+@app.route('Update')
 def createAccessFile():
     #calculate time period to look back based on user preference 
     #Checks for numbers of days to look back either from the sys.argv or api request
