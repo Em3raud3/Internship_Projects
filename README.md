@@ -36,3 +36,13 @@ This code does the following
   1. Parse through the logs in Nginx and generate an "app.qcr.io.access.log" file
   2. Analyzes and formats the data from "app.qcr.io.access.log" as well as generate a CSV file with the data stored at ./static/js directory
   3. Uses flask to render the "index.html" file and host it in localhost.
+
+### templates/intex.html
+Uses the csv file generated from AccessLog.py to generate a stacking bar graph through D3 utilities
+
+### Dockerfile
+The dockerfile that is used to generate the image for this project
+
+### requirements.txt
+List of all dependencies that will be needed to run this project so it can be download though python pip
+
