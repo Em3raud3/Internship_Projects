@@ -9,7 +9,7 @@ The main repository for this project is stored in GitLab, where CI/CD has been s
 
 The entire project has been dockerized and has an ansible-playbook setup to allow a user to deploy this service to any machine.
 
-##Requirements
+## Requirements
 1. Download the docker-compose.yml file from the repository. 
 2. The Nginx service set up to collect logs for user logins must already be set up and stores the logs in the "nginx" directory
 3. The docker-compose.yml, "data" directory, and "nginx" directory must all be all placed in the same directory.
@@ -17,21 +17,21 @@ The entire project has been dockerized and has an ansible-playbook setup to allo
   - Create the "data" directory if one does not already exist. 
   - The "nginx" directory is where the login data logs are stored by the service that automatically collects it. 
 
-##Useage:
+## Useage:
 docker-compose up
 
-##Recommendations 
+## Recommendations 
 Once the service is up and running, set up a cronjob to execute refresh the chart to account daily to account for new data.
 
-##Overview
+## Overview
 
-###data
+### data
 This is a directory that is used to volume mounts data used in the project through in the docker-compose file
 
-###nginx
+### nginx
 The directory that the Nginx service stores the logs of login information and app usage of users in the company.
 
-###AccessLog.py
+### AccessLog.py
 This code does the following
   1. Parse through the logs in Nginx and generate an "app.qcr.io.access.log" file
   2. Analyzes and formats the data from "app.qcr.io.access.log" as well as generate a CSV file with the data stored at ./static/js directory
